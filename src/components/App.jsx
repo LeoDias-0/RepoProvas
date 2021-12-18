@@ -5,14 +5,12 @@ import {
 	Route
 } from 'react-router-dom'
 
-const Test = () => <h1>Testando</h1>
-
 const App = () => {
 	return (
 		<BrowserRouter>
 			<ResetCSS />
 			<Routes>
-				<Route path='/' element={<Test />} />
+				<Route path='/' element={<h1>Work in progress</h1>} />
 			</Routes>
 		</BrowserRouter>
 	)
