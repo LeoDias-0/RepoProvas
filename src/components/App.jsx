@@ -6,6 +6,8 @@ import {
 import ResetCSS from './utils/ResetCSS'
 import SelectStyle from './utils/SelectStyle'
 import InitialScreen from './pages/InitialScreen'
+import SearchByProfessor from './pages/SearchByProfessor'
+import SearchByScreen from './pages/SearchByScreen'
 import SendScreen from './pages/SendScreen'
 
 const App = () => {
@@ -15,7 +17,10 @@ const App = () => {
 			<SelectStyle />
 			<Routes>
 				<Route path='/' element={<InitialScreen />} />
-				<Route path='/search' element={<h1>Work in Progress</h1>} />
+				<Route path='/search' element={<SearchByScreen />} />
+				<Route path='/search/professor' element={<SearchByProfessor />} />
+				<Route path='/search/professor/:id' element={<h1>Work in progress</h1>} />
+				<Route path='/search/discipline' element={<h1>Work in progress</h1>} />
 				<Route path='/send' element={<SendScreen />} />
 			</Routes>
 		</BrowserRouter>

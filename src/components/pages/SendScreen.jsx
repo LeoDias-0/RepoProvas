@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Background from '../utils/Background'
 import InfoInput from '../utils/InfoInput'
 import LogoRepoProvas from '../utils/LogoRepoProvas'
@@ -7,43 +7,13 @@ import Button from '../utils/Button'
 import NoShapeButton from '../utils/NoShapeButton'
 import { useNavigate } from 'react-router-dom'
 
-const categories = [
-	{ name: 'P1', value: 'P1' },
-	{ name: 'P2', value: 'P2' },
-	{ name: 'P3', value: 'P3' },
-	{ name: '2ch', value: '2ch' },
-	{ name: 'Outras', value: 'Outras' }
-]
-
-const disciplines = [
-	{ name: 'Geometria Diferencial', value: 'Geometria Diferencial' },
-	{ name: 'Topologia Algébrica', value: 'Topologia Algébrica' },
-	{ name: 'Programação Linear', value: 'Programação Linear' },
-	{ name: 'Dinâmica Não Autônoma', value: 'Dinâmica Não Autônoma' },
-	{ name: 'Variedades Instáveis', value: 'Variedades Instáveis' }
-]
-
-const professors = [
-	{ name: 'Professor X', value: 'Professor X' },
-	{ name: 'Jovem Nerd', value: 'Jovem Nerd' },
-	{ name: 'Isaac Newton', value: 'Isaac Newton' },
-	{ name: 'Henry Poincaré', value: 'Henry Poincaré' },
-	{ name: 'Marcelo Viana', value: 'Marcelo Viana' }
-]
-
-const periods = [
-	{ name: 'Primeiro', value: 'Primeiro' },
-	{ name: 'Segundo', value: 'Segundo' },
-	{ name: 'Terceiro', value: 'Terceiro' },
-	{ name: 'Quarto', value: 'Quarto' },
-	{ name: 'Quinto', value: 'Quinto' },
-	{ name: 'Sexto', value: 'Sexto' },
-	{ name: 'Sétimo', value: 'Sétimo' },
-	{ name: 'Oitavo', value: 'Oitavo' },
-	{ name: 'Nono', value: 'Nono' },
-	{ name: 'Décimo', value: 'Décimo' },
-	{ name: 'Eletiva', value: 'Eletiva' },
-]
+import {
+	categories,
+	disciplines,
+	professors,
+	periods
+} from '../../globals'
+import { getQuery, sendExam } from '../../services/API'
 
 const SendScreen = () => {
 	const [name, setName] = useState('')
@@ -53,7 +23,27 @@ const SendScreen = () => {
 	const [period, setPeriod] = useState('')
 	const [link, setLink] = useState('')
 
+	const [filteredProfs, setFilteredProfs] = useState(professors)
+
 	const navigate = useNavigate()
+
+	useEffect(() => {
+		if (discipline === '' || !discipline) {
+			setFilteredProfs(professors)
+		} else {
+			getQuery('discipline', discipline).then((res) => {
+
+				setFilteredProfs([...res.data.map(a => {
+					return {
+						name: a.professor,
+						value: a.professor
+					}
+				})])
+
+			}).catch(res => console.log({ res }))
+		}
+		//eslint-disable-next-line
+	}, [discipline])
 
 	return (
 		<Background>
@@ -72,7 +62,7 @@ const SendScreen = () => {
 				track={[discipline, setDiscipline]}
 			/>
 			<SearchDropDown
-				options={professors}
+				options={filteredProfs}
 				placeholder={'Professor'}
 				emptyMessage={'Professor não encontrado'}
 				track={[professor, setProfessor]}
@@ -84,7 +74,16 @@ const SendScreen = () => {
 				track={[period, setPeriod]}
 			/>
 			<InfoInput placeholder={'Link da Prova'} track={[link, setLink]} />
-			<Button text={'Enviar prova'} onClick={() => console.log('Enviando Prova')} />
+			<Button text={'Enviar prova'} onClick={() => {
+				sendExam({
+					name,
+					category,
+					period,
+					discipline,
+					professor,
+					link
+				}).then(() => navigate('/'))
+			}} />
 			<NoShapeButton text={'Voltar'} onClick={() => navigate('/')} />
 		</Background>
 	)
