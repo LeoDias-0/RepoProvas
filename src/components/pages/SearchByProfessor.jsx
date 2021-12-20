@@ -1,23 +1,14 @@
 import Background from '../utils/Background'
 import Select from 'react-select'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import LogoRepoProvas from '../utils/LogoRepoProvas'
 import Button from '../utils/Button'
 import NoShapeButton from '../utils/NoShapeButton'
 import { useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
+import { professors } from '../../globals'
+import { getExams } from '../../services/API'
 
-const professorsWithQty = [
-	{ id: 1, name: 'Professor X', qty: 10, value: 'Professor X' },
-	{ id: 2, name: 'Jovem Nerd', qty: 15, value: 'Jovem Nerd' },
-	{ id: 6, name: 'Isaac Newton', qty: 11, value: 'Isaac Newton' },
-	{ id: 8, name: 'Henry Poincaré', qty: 10, value: 'Henry Poincaré' },
-	{ id: 81, name: 'Marcelo Viana', qty: 8, value: 'Marcelo Viana' },
-	{ id: 9, name: 'Isaac Newton', qty: 11, value: 'Isaac Newton' },
-	{ id: 10, name: 'Henry Poincaré', qty: 10, value: 'Henry Poincaré' },
-	{ id: 4, name: 'Marcelo Viana', qty: 8, value: 'Marcelo Viana' },
-	{ id: 79, name: 'Isaac Newton', qty: 11, value: 'Isaac Newton' }
-]
 
 const customStyles = {
 	option: styles => ({
@@ -73,6 +64,24 @@ const SearchByProfessor = () => {
 
 	const [option, setOption] = useState('')
 
+	const [profsQty, setProfsQty] = useState('')
+
+	useEffect(() => {
+		getExams().then((res) => {
+
+			const exams = res.data
+
+			setProfsQty(professors.map(row => {
+				const qty = exams.filter(a => a.professor === row.name).length
+				return {
+					...row,
+					qty,
+					id: encodeURI(row.name)
+				}
+			}))
+		})
+	}, [])
+
 	return (
 		<Background>
 			<LogoRepoProvas />
@@ -83,7 +92,7 @@ const SearchByProfessor = () => {
 				isClearable
 				isSearchable
 				name="color"
-				options={professorsWithQty}
+				options={profsQty === '' ? [] : profsQty}
 				getOptionLabel={(option) => {
 					return (
 						<div style={RowStyles}>

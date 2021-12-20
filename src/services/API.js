@@ -14,7 +14,12 @@ const sendExam = exam => {
 	return axios.post(`${BASE_URL}/send`, exam)
 }
 
+const getExams = () => {
+	return axios.get(`${BASE_URL}/exams`)
+}
+
 export {
 	getQuery,
-	sendExam
+	sendExam,
+	getExams
 }
