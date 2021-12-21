@@ -6,7 +6,6 @@ import Background from "../utils/Background"
 import RenderExams from "../utils/RenderExams"
 import { categories } from "../../globals"
 
-
 const ExamsByProfessorScreen = () => {
 
 	const { id } = useParams()
@@ -29,7 +28,7 @@ const ExamsByProfessorScreen = () => {
 
 					if (examsWithCategory.length === 0) return ''
 
-					return <RenderExams key={category} exams={exams} title={category} />
+					return <RenderExams key={category} exams={examsWithCategory} title={category} />
 				})
 			}
 
